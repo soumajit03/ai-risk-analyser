@@ -4,6 +4,7 @@ import { Activity, AlertTriangle, BarChart, Bot, ChevronLeft, ChevronRight, Cloc
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Link, useLocation } from "react-router-dom";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -13,39 +14,39 @@ const navItems = [
   {
     title: "Dashboard",
     icon: Home,
-    href: "#",
-    active: true
+    href: "/",
   },
   {
     title: "Market Analysis",
     icon: LineChart,
-    href: "#",
+    href: "/market-analysis",
   },
   {
     title: "Risk Scoring",
     icon: AlertTriangle,
-    href: "#",
+    href: "/risk-scoring",
   },
   {
     title: "Project Status",
     icon: Activity,
-    href: "#",
+    href: "/project-status",
   },
   {
     title: "Reports",
     icon: FileText,
-    href: "#",
+    href: "/reports",
   },
   {
     title: "Chat Assistant",
     icon: Bot,
-    href: "#",
+    href: "/chat-assistant",
   }
 ];
 
 export function DashboardLayout({ children }: DashboardLayoutProps) {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const location = useLocation();
 
   return (
     <div className="relative min-h-screen flex">
@@ -81,32 +82,36 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         
         <div className="flex-1 overflow-auto py-4">
           <nav className="grid gap-1 px-2">
-            {navItems.map((item) => (
-              <TooltipProvider key={item.title}>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant={item.active ? "secondary" : "ghost"}
-                      className={cn(
-                        "justify-start",
-                        collapsed ? "w-10 h-10 p-0 mx-auto" : "w-full"
-                      )}
-                      asChild
-                    >
-                      <a href={item.href}>
-                        <item.icon className={cn("h-5 w-5", !collapsed && "mr-2")} />
-                        {!collapsed && <span>{item.title}</span>}
-                      </a>
-                    </Button>
-                  </TooltipTrigger>
-                  {collapsed && (
-                    <TooltipContent side="right">
-                      {item.title}
-                    </TooltipContent>
-                  )}
-                </Tooltip>
-              </TooltipProvider>
-            ))}
+            {navItems.map((item) => {
+              const isActive = location.pathname === item.href;
+              
+              return (
+                <TooltipProvider key={item.title}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant={isActive ? "secondary" : "ghost"}
+                        className={cn(
+                          "justify-start",
+                          collapsed ? "w-10 h-10 p-0 mx-auto" : "w-full"
+                        )}
+                        asChild
+                      >
+                        <Link to={item.href} onClick={() => setMobileMenuOpen(false)}>
+                          <item.icon className={cn("h-5 w-5", !collapsed && "mr-2")} />
+                          {!collapsed && <span>{item.title}</span>}
+                        </Link>
+                      </Button>
+                    </TooltipTrigger>
+                    {collapsed && (
+                      <TooltipContent side="right">
+                        {item.title}
+                      </TooltipContent>
+                    )}
+                  </Tooltip>
+                </TooltipProvider>
+              );
+            })}
           </nav>
         </div>
         
