@@ -234,7 +234,7 @@ export function ConversationalBot() {
                     {message.type === 'bot' ? 'AI Assistant' : 'You'}
                   </span>
                 </div>
-                <div>{message.text}</div>
+                <div style={{whiteSpace: 'pre-wrap'}}>{message.text}</div>
               </div>
             ))}
             
