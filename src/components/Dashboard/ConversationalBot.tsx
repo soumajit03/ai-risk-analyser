@@ -44,31 +44,7 @@ export function ConversationalBot() {
     
     // Simulate bot response
     setTimeout(() => {
-      let botReply = "I'm not sure how to respond to that. Try asking about project status, risk overview, or market trends.";
-      
-      // Check for keywords in user message
-      const userText = input.toLowerCase();
-      
-      if (userText.includes('project') && (userText.includes('status') || userText.includes('update'))) {
-        const projectName = extractProjectName(userText);
-        if (projectName) {
-          botReply = botResponses.projectStatus(projectName);
-        } else {
-          botReply = "Which project would you like to know about? Please specify a project name.";
-        }
-      } else if (
-        (userText.includes('risk') && userText.includes('overview')) || 
-        userText.includes('overall risk') ||
-        userText.includes('summary')
-      ) {
-        botReply = botResponses.overallRisk();
-      } else if (
-        userText.includes('market') || 
-        userText.includes('trend') || 
-        userText.includes('external')
-      ) {
-        botReply = botResponses.marketTrends();
-      }
+      let botReply = generateResponse(input);
       
       const botMessage: Message = {
         id: (Date.now() + 1).toString(),
@@ -80,6 +56,111 @@ export function ConversationalBot() {
       setMessages(prev => [...prev, botMessage]);
       setIsLoading(false);
     }, 1000);
+  };
+
+  const generateResponse = (userInput: string): string => {
+    const userText = userInput.toLowerCase();
+    
+    // Check for project status queries
+    if (userText.includes('project') && (userText.includes('status') || userText.includes('update'))) {
+      const projectName = extractProjectName(userText);
+      if (projectName) {
+        return botResponses.projectStatus(projectName);
+      } else {
+        return "Which project would you like to know about? We're currently tracking Cloud Migration, CRM Implementation, and E-Commerce Platform.";
+      }
+    } 
+    
+    // Check for risk overview queries
+    else if (
+      (userText.includes('risk') && (userText.includes('overview') || userText.includes('summary'))) || 
+      userText.includes('overall risk') ||
+      userText.match(/risk.{0,10}summary/)
+    ) {
+      return botResponses.overallRisk();
+    } 
+    
+    // Check for market trend queries
+    else if (
+      userText.includes('market') || 
+      userText.includes('trend') || 
+      userText.includes('external') || 
+      userText.includes('economy') || 
+      userText.includes('indicator')
+    ) {
+      return botResponses.marketTrends();
+    }
+    
+    // Check for high risk inquiries
+    else if (
+      (userText.includes('high') || userText.includes('critical')) && 
+      userText.includes('risk')
+    ) {
+      return "The highest risk currently identified is the Payment Gateway Integration Failure in the E-Commerce Platform project, with a 75% probability and 95% impact rating. This critical risk requires immediate attention.";
+    }
+    
+    // Check for mitigation strategy inquiries
+    else if (
+      userText.includes('mitigate') || 
+      userText.includes('mitigation') || 
+      userText.includes('fix') || 
+      userText.includes('resolve') || 
+      userText.includes('solution')
+    ) {
+      if (userText.includes('security') || userText.includes('breach')) {
+        return "For data security risks, we recommend implementing advanced encryption protocols, conducting regular security audits, and implementing a zero-trust architecture. Would you like me to provide more specific recommendations?";
+      } else if (userText.includes('payment') || userText.includes('gateway')) {
+        return "For the payment gateway integration issue, we recommend engaging directly with the payment gateway vendor's support team, implementing a fallback payment processor, and extending the testing period by two weeks.";
+      } else {
+        return "I can suggest mitigation strategies for specific risks. Could you specify which risk area you're concerned about? Common categories include security, technical, operational, or people-related risks.";
+      }
+    }
+    
+    // Check for budget inquiries
+    else if (userText.includes('budget') || userText.includes('cost') || userText.includes('spending')) {
+      if (userText.includes('cloud') || userText.includes('migration')) {
+        return "The Cloud Migration project has spent $275,000 of its $500,000 budget (55%), with 45% progress completed. This suggests the project is slightly over budget relative to completion.";
+      } else if (userText.includes('crm')) {
+        return "The CRM Implementation project has spent $150,000 of its $300,000 budget (50%), with 60% progress completed. This project is currently under budget relative to completion.";
+      } else if (userText.includes('ecommerce') || userText.includes('e-commerce')) {
+        return "The E-Commerce Platform project has spent $600,000 of its $750,000 budget (80%), with 70% progress completed. This project is currently over budget and requires financial review.";
+      } else {
+        return "Across all projects, the current spending is $1,025,000 out of a total budget of $1,550,000 (66%). Would you like details on a specific project's budget?";
+      }
+    }
+    
+    // Check for timeline/schedule inquiries
+    else if (
+      userText.includes('timeline') || 
+      userText.includes('schedule') || 
+      userText.includes('deadline') || 
+      userText.includes('delay')
+    ) {
+      if (userText.includes('cloud') || userText.includes('migration')) {
+        return "The Cloud Migration project started on June 1, 2023 and is scheduled to complete by December 31, 2023. It's currently at 45% completion and flagged as At Risk due to security concerns.";
+      } else if (userText.includes('crm')) {
+        return "The CRM Implementation project started on April 1, 2023 and is scheduled to complete by October 31, 2023. It's currently at 60% completion and On Track.";
+      } else if (userText.includes('ecommerce') || userText.includes('e-commerce')) {
+        return "The E-Commerce Platform project started on January 15, 2023 and was scheduled to complete by September 30, 2023. It's currently Delayed with 70% completion due to technical integration issues.";
+      } else {
+        return "Two of our three active projects are behind their ideal progress timelines. The E-Commerce Platform is officially delayed, while Cloud Migration is at risk of delay. Would you like specific timeline information for any project?";
+      }
+    }
+    
+    // Help or example queries
+    else if (userText.includes('help') || userText.includes('example') || userText.includes('what can you do')) {
+      return "I can help you with information about project risks, status updates, market trends, budget information, and timelines. Try asking me questions like:\n\n- 'What's the status of the Cloud Migration project?'\n- 'Give me an overall risk summary'\n- 'What are the current market trends affecting our projects?'\n- 'What's our highest risk right now?'\n- 'How is the E-Commerce Platform budget looking?'";
+    }
+    
+    // Greeting responses
+    else if (userText.match(/^(hi|hello|hey|greetings).{0,10}$/)) {
+      return "Hello! I'm your Project Risk AI Assistant. How can I help you analyze your project risks today?";
+    }
+    
+    // Fallback response
+    else {
+      return "I'm here to help with project risk assessment and management. Could you clarify what you'd like to know? You can ask about project status, risk overviews, market trends, budgets, or timelines.";
+    }
   };
 
   const extractProjectName = (text: string): string | null => {
@@ -104,6 +185,14 @@ export function ConversationalBot() {
             }
           }
         }
+      }
+    }
+    
+    // Match common project names directly
+    const projectNames = ["cloud migration", "cloud", "migration", "crm", "crm implementation", "ecommerce", "e-commerce", "e commerce", "ecommerce platform", "e-commerce platform"];
+    for (const name of projectNames) {
+      if (text.toLowerCase().includes(name)) {
+        return name;
       }
     }
     
