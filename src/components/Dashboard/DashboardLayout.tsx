@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Link, useLocation } from "react-router-dom";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -115,7 +116,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
           </nav>
         </div>
         
-        <div className="p-4 border-t">
+        <div className="p-4 border-t flex items-center justify-between">
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -123,7 +124,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                   variant="ghost"
                   className={cn(
                     "justify-start",
-                    collapsed ? "w-10 h-10 p-0 mx-auto" : "w-full"
+                    collapsed ? "w-10 h-10 p-0" : ""
                   )}
                 >
                   <Settings className={cn("h-5 w-5", !collapsed && "mr-2")} />
@@ -137,6 +138,8 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
               )}
             </Tooltip>
           </TooltipProvider>
+          
+          <ThemeToggle />
         </div>
       </div>
 
@@ -150,7 +153,8 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
           <Button variant="outline" size="icon" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
             <Menu className="h-5 w-5" />
           </Button>
-          <div className="font-semibold">Risk Navigator</div>
+          <div className="font-semibold flex-1">Risk Navigator</div>
+          <ThemeToggle />
         </header>
 
         {/* Content */}
