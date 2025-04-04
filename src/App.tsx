@@ -14,6 +14,8 @@ import Reports from "./pages/Reports";
 import ChatAssistant from "./pages/ChatAssistant";
 import SignInPage from "./pages/Auth/SignIn";
 import SignUpPage from "./pages/Auth/SignUp";
+import Profile from "./pages/Profile";
+import Settings from "./pages/Settings";
 import { AuthLayout } from "./components/Auth/AuthLayout";
 import { useAuth } from "@clerk/clerk-react";
 
@@ -46,6 +48,8 @@ const App = () => {
               <Route path="/project-status" element={<AuthLayout><ProjectStatus /></AuthLayout>} />
               <Route path="/reports" element={<AuthLayout><Reports /></AuthLayout>} />
               <Route path="/chat-assistant" element={<AuthLayout><ChatAssistant /></AuthLayout>} />
+              <Route path="/profile" element={<AuthLayout><Profile /></AuthLayout>} />
+              <Route path="/settings" element={<AuthLayout><Settings /></AuthLayout>} />
               
               {/* Catch-all route */}
               <Route path="*" element={<NotFound />} />

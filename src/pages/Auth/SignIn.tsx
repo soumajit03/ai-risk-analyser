@@ -21,9 +21,8 @@ const SignInPage = () => {
                 footerAction: "text-primary",
               }
             }}
-            routing={{
-              fallbackRedirectUrl: "/"
-            }}
+            routing="path"
+            path="/"
           />
         </CardContent>
       </Card>
