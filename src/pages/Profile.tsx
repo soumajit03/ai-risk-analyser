@@ -24,11 +24,13 @@ const Profile = () => {
         <h1 className="text-2xl font-bold mb-4">Your Profile</h1>
         
         <div className="grid gap-4 md:grid-cols-3">
-          {/* User Info Card - No background */}
+          {/* User Info Card */}
           <div className="md:col-span-1">
-            <div className="border rounded-lg p-6 bg-background">
-              <h3 className="text-2xl font-semibold leading-none tracking-tight mb-3">User Information</h3>
-              <div className="flex flex-col items-center space-y-3">
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle>User Information</CardTitle>
+              </CardHeader>
+              <CardContent className="flex flex-col items-center space-y-3">
                 <Avatar className="h-24 w-24">
                   <AvatarImage src={user?.imageUrl} />
                   <AvatarFallback className="text-3xl">{userInitials}</AvatarFallback>
@@ -47,8 +49,8 @@ const Profile = () => {
                     <dd className="text-muted-foreground">{user?.lastSignInAt ? new Date(user.lastSignInAt).toLocaleDateString() : "N/A"}</dd>
                   </div>
                 </dl>
-              </div>
-            </div>
+              </CardContent>
+            </Card>
           </div>
           
           {/* Clerk Profile Management - Without Card background */}
