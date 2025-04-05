@@ -1,14 +1,18 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { BarChart, ChevronDown, Filter } from "lucide-react";
+import { BarChart, ChevronDown, Filter, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { projects, Project, Risk } from "@/utils/mockData";
+import { Project, Risk } from "@/utils/mockData";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { useProjects } from "@/context/ProjectContext";
+import { AddProjectDialog } from "./AddProjectDialog";
 
 export function ProjectRisks() {
+  const { projects, isAddProjectDialogOpen, setAddProjectDialogOpen, addProject } = useProjects();
+  
   function getRiskBadgeClass(level: string) {
     switch (level) {
       case 'Low': return 'bg-green-100 text-green-800 hover:bg-green-200';
@@ -36,7 +40,13 @@ export function ProjectRisks() {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold">Project Risks</h2>
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold">Project Risks</h2>
+        <Button onClick={() => setAddProjectDialogOpen(true)}>
+          <Plus className="h-4 w-4 mr-2" />
+          Add Project
+        </Button>
+      </div>
       
       <Card>
         <CardHeader>
@@ -80,9 +90,10 @@ export function ProjectRisks() {
                   <TableCell>
                     <div className={cn(
                       "px-2 py-1 rounded-md text-xs font-medium inline-block",
-                      project.riskScore > 70 ? "risk-critical" :
-                      project.riskScore > 50 ? "risk-high" :
-                      project.riskScore > 30 ? "risk-medium" : "risk-low"
+                      project.riskScore > 70 ? "bg-red-100 text-red-800" :
+                      project.riskScore > 50 ? "bg-orange-100 text-orange-800" :
+                      project.riskScore > 30 ? "bg-yellow-100 text-yellow-800" : 
+                      "bg-green-100 text-green-800"
                     )}>
                       {project.riskScore}/100
                     </div>
@@ -137,6 +148,12 @@ export function ProjectRisks() {
           </Table>
         </CardContent>
       </Card>
+      
+      <AddProjectDialog 
+        open={isAddProjectDialogOpen} 
+        onOpenChange={setAddProjectDialogOpen}
+        onAddProject={addProject}
+      />
     </div>
   );
 }

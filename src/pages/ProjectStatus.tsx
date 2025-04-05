@@ -4,102 +4,70 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";
+import { useProjects } from "@/context/ProjectContext";
+import { AddProjectDialog } from "@/components/Dashboard/AddProjectDialog";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
 
-// Define the Project type
-interface Project {
-  id: string;
-  name: string;
-  status: "In Progress" | "Completed" | "On Hold" | "Planning";
-  completion: number;
-  dueDate: string;
-  leadName: string;
-  team: string[];
-  milestones: {
-    name: string;
-    date: string;
-    completed: boolean;
-  }[];
-}
-
-const projects: Project[] = [
-  {
-    id: "1",
-    name: "Market Entry Strategy - Asia",
-    status: "In Progress",
-    completion: 65,
-    dueDate: "2023-06-15",
-    leadName: "Sarah Chen",
-    team: ["Alex Johnson", "Maria Lopez", "David Kim"],
-    milestones: [
-      { name: "Market Assessment", date: "2023-03-15", completed: true },
-      { name: "Competitor Analysis", date: "2023-04-10", completed: true },
-      { name: "Partnership Strategy", date: "2023-05-20", completed: false },
-      { name: "Final Recommendations", date: "2023-06-10", completed: false },
-    ],
-  },
-  {
-    id: "2",
-    name: "Product Launch - QZ Series",
-    status: "Planning",
-    completion: 25,
-    dueDate: "2023-08-30",
-    leadName: "Carlos Rodriguez",
-    team: ["Emma Wilson", "James Park", "Lisa Chen"],
-    milestones: [
-      { name: "Product Specifications", date: "2023-05-15", completed: true },
-      { name: "Prototype Development", date: "2023-06-30", completed: false },
-      { name: "Market Testing", date: "2023-07-30", completed: false },
-      { name: "Launch Plan", date: "2023-08-15", completed: false },
-    ],
-  },
-  {
-    id: "3",
-    name: "Operational Efficiency Review",
-    status: "Completed",
-    completion: 100,
-    dueDate: "2023-04-30",
-    leadName: "Michelle Thompson",
-    team: ["Robert Zhang", "Daniel Adams", "Sophia Lee"],
-    milestones: [
-      { name: "Data Collection", date: "2023-02-15", completed: true },
-      { name: "Process Analysis", date: "2023-03-10", completed: true },
-      { name: "Recommendations", date: "2023-04-05", completed: true },
-      { name: "Implementation Plan", date: "2023-04-25", completed: true },
-    ],
-  },
-  {
-    id: "4",
-    name: "Regulatory Compliance Update",
-    status: "On Hold",
-    completion: 40,
-    dueDate: "2023-07-15",
-    leadName: "Thomas Anderson",
-    team: ["Jennifer Wilson", "Michael Brown", "Amanda Chen"],
-    milestones: [
-      { name: "Regulation Review", date: "2023-04-20", completed: true },
-      { name: "Gap Analysis", date: "2023-05-15", completed: true },
-      { name: "Implementation Strategy", date: "2023-06-20", completed: false },
-      { name: "Compliance Report", date: "2023-07-10", completed: false },
-    ],
-  }
-];
-
+// Map project status to class names
 const statusColorMap = {
-  "In Progress": "text-blue-600 bg-blue-100",
-  Completed: "text-green-600 bg-green-100",
-  "On Hold": "text-amber-600 bg-amber-100",
-  Planning: "text-purple-600 bg-purple-100",
+  "On Track": "text-blue-600 bg-blue-100",
+  "Completed": "text-green-600 bg-green-100",
+  "Delayed": "text-amber-600 bg-amber-100",
+  "At Risk": "text-red-600 bg-red-100",
 };
 
 const ProjectStatus = () => {
-  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const { projects, isAddProjectDialogOpen, setAddProjectDialogOpen, addProject } = useProjects();
+  const [selectedProject, setSelectedProject] = useState(projects.length > 0 ? projects[0] : null);
+
+  // Create simple milestones based on project progress
+  const getMilestones = (project) => {
+    const startDate = new Date(project.startDate);
+    const endDate = new Date(project.endDate);
+    const range = endDate.getTime() - startDate.getTime();
+    
+    return [
+      { 
+        name: "Project Start", 
+        date: project.startDate, 
+        completed: true 
+      },
+      { 
+        name: "25% Completion", 
+        date: new Date(startDate.getTime() + (range * 0.25)).toISOString().split('T')[0], 
+        completed: project.progress >= 25 
+      },
+      { 
+        name: "50% Completion", 
+        date: new Date(startDate.getTime() + (range * 0.5)).toISOString().split('T')[0], 
+        completed: project.progress >= 50 
+      },
+      { 
+        name: "75% Completion", 
+        date: new Date(startDate.getTime() + (range * 0.75)).toISOString().split('T')[0], 
+        completed: project.progress >= 75 
+      },
+      { 
+        name: "Project Completion", 
+        date: project.endDate, 
+        completed: project.progress === 100 
+      },
+    ];
+  };
 
   return (
     <DashboardLayout>
       <div className="space-y-8">
-        <header>
-          <h1 className="text-3xl font-bold">Project Status</h1>
-          <p className="text-muted-foreground">Monitor current project progress and tasks</p>
+        <header className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold">Project Status</h1>
+            <p className="text-muted-foreground">Monitor current project progress and tasks</p>
+          </div>
+          <Button onClick={() => setAddProjectDialogOpen(true)}>
+            <Plus className="h-4 w-4 mr-2" />
+            Add Project
+          </Button>
         </header>
 
         <div className="grid gap-6 lg:grid-cols-2">
@@ -130,7 +98,7 @@ const ProjectStatus = () => {
                         <TableCell>
                           <span
                             className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                              statusColorMap[project.status]
+                              statusColorMap[project.status] || "bg-gray-100 text-gray-800"
                             }`}
                           >
                             {project.status}
@@ -140,14 +108,14 @@ const ProjectStatus = () => {
                           <div className="w-full bg-muted rounded-full h-2.5">
                             <div
                               className="bg-primary h-2.5 rounded-full"
-                              style={{ width: `${project.completion}%` }}
+                              style={{ width: `${project.progress}%` }}
                             ></div>
                           </div>
                           <span className="text-xs text-muted-foreground mt-1">
-                            {project.completion}%
+                            {project.progress}%
                           </span>
                         </TableCell>
-                        <TableCell>{new Date(project.dueDate).toLocaleDateString()}</TableCell>
+                        <TableCell>{new Date(project.endDate).toLocaleDateString()}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -166,7 +134,7 @@ const ProjectStatus = () => {
                 <Tabs defaultValue="details">
                   <TabsList className="grid w-full grid-cols-3">
                     <TabsTrigger value="details">Details</TabsTrigger>
-                    <TabsTrigger value="team">Team</TabsTrigger>
+                    <TabsTrigger value="risks">Risks</TabsTrigger>
                     <TabsTrigger value="milestones">Milestones</TabsTrigger>
                   </TabsList>
                   <TabsContent value="details" className="space-y-4 mt-4">
@@ -177,31 +145,71 @@ const ProjectStatus = () => {
                       </div>
                       <div>
                         <h4 className="text-sm font-medium text-muted-foreground">Completion</h4>
-                        <p className="mt-1">{selectedProject.completion}%</p>
+                        <p className="mt-1">{selectedProject.progress}%</p>
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-medium text-muted-foreground">Start Date</h4>
+                        <p className="mt-1">
+                          {new Date(selectedProject.startDate).toLocaleDateString()}
+                        </p>
                       </div>
                       <div>
                         <h4 className="text-sm font-medium text-muted-foreground">Due Date</h4>
                         <p className="mt-1">
-                          {new Date(selectedProject.dueDate).toLocaleDateString()}
+                          {new Date(selectedProject.endDate).toLocaleDateString()}
                         </p>
                       </div>
                       <div>
-                        <h4 className="text-sm font-medium text-muted-foreground">Project Lead</h4>
-                        <p className="mt-1">{selectedProject.leadName}</p>
+                        <h4 className="text-sm font-medium text-muted-foreground">Budget</h4>
+                        <p className="mt-1">${selectedProject.budget.toLocaleString()}</p>
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-medium text-muted-foreground">Spent</h4>
+                        <p className="mt-1">${selectedProject.spent.toLocaleString()}</p>
                       </div>
                     </div>
+                    <div>
+                      <h4 className="text-sm font-medium text-muted-foreground mb-1">Description</h4>
+                      <p className="text-sm">{selectedProject.description}</p>
+                    </div>
                   </TabsContent>
-                  <TabsContent value="team" className="mt-4">
-                    <ul className="space-y-2">
-                      <li className="font-medium">Project Lead: {selectedProject.leadName}</li>
-                      {selectedProject.team.map((member, i) => (
-                        <li key={i} className="ml-4">• {member}</li>
-                      ))}
-                    </ul>
+                  <TabsContent value="risks" className="mt-4">
+                    {selectedProject.risks.length > 0 ? (
+                      <ul className="space-y-3">
+                        {selectedProject.risks.map((risk) => (
+                          <li key={risk.id} className="border-b border-muted pb-2">
+                            <div className="flex justify-between items-start">
+                              <div>
+                                <h4 className="font-medium flex items-center">
+                                  <span
+                                    className={`inline-block w-2 h-2 rounded-full mr-2 ${
+                                      risk.level === "Low" ? "bg-green-500" :
+                                      risk.level === "Medium" ? "bg-yellow-500" :
+                                      risk.level === "High" ? "bg-orange-500" : "bg-red-500"
+                                    }`}
+                                  />
+                                  {risk.name}
+                                </h4>
+                                <p className="text-sm mt-1">{risk.description}</p>
+                              </div>
+                              <span className="text-xs font-medium px-2 py-1 rounded-full bg-gray-100">
+                                {risk.level}
+                              </span>
+                            </div>
+                            <div className="flex justify-between text-xs text-muted-foreground mt-2">
+                              <span>Category: {risk.category}</span>
+                              <span>Status: {risk.status}</span>
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="text-muted-foreground">No risks identified for this project.</p>
+                    )}
                   </TabsContent>
                   <TabsContent value="milestones" className="mt-4">
                     <ul className="space-y-3">
-                      {selectedProject.milestones.map((milestone, i) => (
+                      {getMilestones(selectedProject).map((milestone, i) => (
                         <li
                           key={i}
                           className="flex items-center justify-between border-b border-muted pb-2"
@@ -236,6 +244,12 @@ const ProjectStatus = () => {
             </Card>
           )}
         </div>
+
+        <AddProjectDialog 
+          open={isAddProjectDialogOpen} 
+          onOpenChange={setAddProjectDialogOpen}
+          onAddProject={addProject}
+        />
       </div>
     </DashboardLayout>
   );

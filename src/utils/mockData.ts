@@ -1,4 +1,3 @@
-
 // Mock data for the AI-Powered Project Risk Management System
 
 export type RiskLevel = 'Low' | 'Medium' | 'High' | 'Critical';
@@ -31,16 +30,8 @@ export interface Project {
   risks: Risk[];
 }
 
-// Market indicators data
-export interface MarketIndicator {
-  name: string;
-  value: number;
-  trend: 'up' | 'down' | 'stable';
-  impact: 'positive' | 'negative' | 'neutral';
-}
-
-// Mock projects data
-export const projects: Project[] = [
+// Initial projects data
+const initialProjects: Project[] = [
   {
     id: 'p1',
     name: 'Cloud Migration',
@@ -150,7 +141,24 @@ export const projects: Project[] = [
   }
 ];
 
+// Create a store to manage projects data
+export let projects = [...initialProjects];
+
+// Function to add a new project
+export const addProject = (project: Project) => {
+  projects = [...projects, project];
+  return projects;
+};
+
 // Market indicators data
+export interface MarketIndicator {
+  name: string;
+  value: number;
+  trend: 'up' | 'down' | 'stable';
+  impact: 'positive' | 'negative' | 'neutral';
+}
+
+// Mock projects data
 export const marketIndicators: MarketIndicator[] = [
   { name: 'Technology Sector Volatility', value: 27, trend: 'up', impact: 'negative' },
   { name: 'IT Hardware Supply Chain', value: 65, trend: 'down', impact: 'negative' },

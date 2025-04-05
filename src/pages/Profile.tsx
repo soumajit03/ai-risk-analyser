@@ -5,12 +5,13 @@ import { DashboardLayout } from "@/components/Dashboard/DashboardLayout";
 import { useUser } from "@clerk/clerk-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { projects } from "@/utils/mockData";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { useProjects } from "@/context/ProjectContext";
 
 const Profile = () => {
   const { user } = useUser();
+  const { projects } = useProjects();
   
   const userInitials = user?.firstName && user?.lastName 
     ? `${user.firstName[0]}${user.lastName[0]}`.toUpperCase()
