@@ -1,4 +1,3 @@
-
 import { UserProfile } from "@clerk/clerk-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { DashboardLayout } from "@/components/Dashboard/DashboardLayout";
@@ -9,6 +8,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Bell, Shield, Eye, EyeOff, User, Smartphone } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 const Settings = () => {
   const [emailNotifications, setEmailNotifications] = useState(true);

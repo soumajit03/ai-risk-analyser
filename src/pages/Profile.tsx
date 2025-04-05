@@ -20,20 +20,20 @@ const Profile = () => {
 
   return (
     <DashboardLayout>
-      <div className="container mx-auto py-6">
-        <h1 className="text-3xl font-bold mb-6">Your Profile</h1>
+      <div className="container mx-auto py-4">
+        <h1 className="text-2xl font-bold mb-4">Your Profile</h1>
         
-        <div className="grid gap-6 md:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-3">
           {/* User Info Card */}
           <div className="md:col-span-1">
             <Card>
-              <CardHeader>
+              <CardHeader className="pb-2">
                 <CardTitle>User Information</CardTitle>
               </CardHeader>
-              <CardContent className="flex flex-col items-center space-y-4">
-                <Avatar className="h-32 w-32">
+              <CardContent className="flex flex-col items-center space-y-3">
+                <Avatar className="h-24 w-24">
                   <AvatarImage src={user?.imageUrl} />
-                  <AvatarFallback className="text-4xl">{userInitials}</AvatarFallback>
+                  <AvatarFallback className="text-3xl">{userInitials}</AvatarFallback>
                 </Avatar>
                 <div className="text-center">
                   <h2 className="text-xl font-semibold">{user?.fullName || "User"}</h2>
@@ -55,8 +55,8 @@ const Profile = () => {
           
           {/* Clerk Profile Management */}
           <div className="md:col-span-2">
-            <Card>
-              <CardContent className="p-6">
+            <Card className="h-full">
+              <CardContent className="p-4 h-full">
                 <UserProfile 
                   appearance={{
                     elements: {
@@ -75,9 +75,9 @@ const Profile = () => {
         </div>
         
         {/* User's Projects */}
-        <h2 className="text-2xl font-bold mt-8 mb-4">Your Projects</h2>
+        <h2 className="text-xl font-bold mt-6 mb-3">Your Projects</h2>
         <Card>
-          <CardContent className="p-6">
+          <CardContent className="p-4">
             <Table>
               <TableHeader>
                 <TableRow>
