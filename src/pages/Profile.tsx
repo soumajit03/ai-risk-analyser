@@ -53,24 +53,20 @@ const Profile = () => {
             </Card>
           </div>
           
-          {/* Clerk Profile Management */}
+          {/* Clerk Profile Management - Without Card background */}
           <div className="md:col-span-2">
-            <Card className="h-full">
-              <CardContent className="p-4 h-full">
-                <UserProfile 
-                  appearance={{
-                    elements: {
-                      rootBox: "mx-auto",
-                      card: "shadow-none",
-                      navbar: "hidden",
-                      pageScrollBox: "p-0",
-                    }
-                  }}
-                  routing="path"
-                  path="/"
-                />
-              </CardContent>
-            </Card>
+            <UserProfile 
+              appearance={{
+                elements: {
+                  rootBox: "mx-auto",
+                  card: "shadow-none bg-transparent",
+                  navbar: "hidden",
+                  pageScrollBox: "p-0",
+                }
+              }}
+              routing="path"
+              path="/"
+            />
           </div>
         </div>
         

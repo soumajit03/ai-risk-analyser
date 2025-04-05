@@ -1,4 +1,4 @@
-import { UserProfile } from "@clerk/clerk-react";
+
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { DashboardLayout } from "@/components/Dashboard/DashboardLayout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { Bell, Shield, Eye, EyeOff, User, Smartphone } from "lucide-react";
+import { Bell, Shield, Eye, Smartphone } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 const Settings = () => {
@@ -40,12 +40,8 @@ const Settings = () => {
       <div className="container mx-auto py-6">
         <h1 className="text-3xl font-bold mb-6">Account Settings</h1>
         
-        <Tabs defaultValue="profile" className="space-y-4">
+        <Tabs defaultValue="account" className="space-y-4">
           <TabsList>
-            <TabsTrigger value="profile">
-              <User className="h-4 w-4 mr-2" />
-              Profile Settings
-            </TabsTrigger>
             <TabsTrigger value="account">
               <Bell className="h-4 w-4 mr-2" />
               Notifications
@@ -59,25 +55,6 @@ const Settings = () => {
               Security
             </TabsTrigger>
           </TabsList>
-          
-          <TabsContent value="profile" className="space-y-4">
-            <Card>
-              <CardContent className="p-6">
-                <UserProfile 
-                  appearance={{
-                    elements: {
-                      rootBox: "mx-auto",
-                      card: "shadow-none",
-                      navbar: "hidden",
-                      pageScrollBox: "p-0",
-                    }
-                  }}
-                  routing="path"
-                  path="/"
-                />
-              </CardContent>
-            </Card>
-          </TabsContent>
           
           <TabsContent value="account" className="space-y-4">
             <Card>
