@@ -17,12 +17,12 @@ import { Toaster } from "@/components/ui/sonner";
 import { ClerkProvider, SignedIn, SignedOut, RedirectToSignIn } from "@clerk/clerk-react";
 import { ProjectProvider } from "@/context/ProjectContext";
 
-// Import your env variables (if using Vite)
-const clerkPubKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
+// Use the publishable key provided by the user
+const CLERK_PUBLISHABLE_KEY = "pk_test_bmF0aW9uYWwtbG9jdXN0LTU3LmNsZXJrLmFjY291bnRzLmRldiQ";
 
 function App() {
   return (
-    <ClerkProvider publishableKey={clerkPubKey}>
+    <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY}>
       <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
         <ProjectProvider>
           <Toaster position="top-center" />
