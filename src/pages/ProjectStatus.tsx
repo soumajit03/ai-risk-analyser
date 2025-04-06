@@ -6,8 +6,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";
 import { useProjects } from "@/context/ProjectContext";
 import { AddProjectDialog } from "@/components/Dashboard/AddProjectDialog";
+import { EditProjectDialog } from "@/components/Dashboard/EditProjectDialog";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Pencil, Plus } from "lucide-react";
 
 // Map project status to class names
 const statusColorMap = {
@@ -18,8 +19,19 @@ const statusColorMap = {
 };
 
 const ProjectStatus = () => {
-  const { projects, isAddProjectDialogOpen, setAddProjectDialogOpen, addProject } = useProjects();
-  const [selectedProject, setSelectedProject] = useState(projects.length > 0 ? projects[0] : null);
+  const { 
+    projects, 
+    isAddProjectDialogOpen, 
+    setAddProjectDialogOpen, 
+    addProject,
+    isEditProjectDialogOpen,
+    setEditProjectDialogOpen,
+    selectedProject,
+    setSelectedProject,
+    editProject
+  } = useProjects();
+  
+  const [projectToView, setProjectToView] = useState(projects.length > 0 ? projects[0] : null);
 
   // Create simple milestones based on project progress
   const getMilestones = (project) => {
@@ -56,6 +68,11 @@ const ProjectStatus = () => {
     ];
   };
 
+  const handleEditProject = (project) => {
+    setSelectedProject(project);
+    setEditProjectDialogOpen(true);
+  };
+
   return (
     <DashboardLayout>
       <div className="space-y-8">
@@ -85,6 +102,7 @@ const ProjectStatus = () => {
                       <TableHead>Status</TableHead>
                       <TableHead>Progress</TableHead>
                       <TableHead>Due Date</TableHead>
+                      <TableHead>Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -92,9 +110,13 @@ const ProjectStatus = () => {
                       <TableRow
                         key={project.id}
                         className="cursor-pointer hover:bg-muted/50"
-                        onClick={() => setSelectedProject(project)}
                       >
-                        <TableCell className="font-medium">{project.name}</TableCell>
+                        <TableCell 
+                          className="font-medium"
+                          onClick={() => setProjectToView(project)}
+                        >
+                          {project.name}
+                        </TableCell>
                         <TableCell>
                           <span
                             className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
@@ -116,6 +138,19 @@ const ProjectStatus = () => {
                           </span>
                         </TableCell>
                         <TableCell>{new Date(project.endDate).toLocaleDateString()}</TableCell>
+                        <TableCell>
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleEditProject(project);
+                            }}
+                          >
+                            <Pencil className="h-4 w-4 mr-1" />
+                            Edit
+                          </Button>
+                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -124,11 +159,21 @@ const ProjectStatus = () => {
             </CardContent>
           </Card>
 
-          {selectedProject ? (
+          {projectToView ? (
             <Card>
-              <CardHeader>
-                <CardTitle>{selectedProject.name}</CardTitle>
-                <CardDescription>Project details and milestones</CardDescription>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <div>
+                  <CardTitle>{projectToView.name}</CardTitle>
+                  <CardDescription>Project details and milestones</CardDescription>
+                </div>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => handleEditProject(projectToView)}
+                >
+                  <Pencil className="h-4 w-4 mr-2" />
+                  Edit Project
+                </Button>
               </CardHeader>
               <CardContent>
                 <Tabs defaultValue="details">
@@ -141,42 +186,42 @@ const ProjectStatus = () => {
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <h4 className="text-sm font-medium text-muted-foreground">Status</h4>
-                        <p className="mt-1">{selectedProject.status}</p>
+                        <p className="mt-1">{projectToView.status}</p>
                       </div>
                       <div>
                         <h4 className="text-sm font-medium text-muted-foreground">Completion</h4>
-                        <p className="mt-1">{selectedProject.progress}%</p>
+                        <p className="mt-1">{projectToView.progress}%</p>
                       </div>
                       <div>
                         <h4 className="text-sm font-medium text-muted-foreground">Start Date</h4>
                         <p className="mt-1">
-                          {new Date(selectedProject.startDate).toLocaleDateString()}
+                          {new Date(projectToView.startDate).toLocaleDateString()}
                         </p>
                       </div>
                       <div>
                         <h4 className="text-sm font-medium text-muted-foreground">Due Date</h4>
                         <p className="mt-1">
-                          {new Date(selectedProject.endDate).toLocaleDateString()}
+                          {new Date(projectToView.endDate).toLocaleDateString()}
                         </p>
                       </div>
                       <div>
                         <h4 className="text-sm font-medium text-muted-foreground">Budget</h4>
-                        <p className="mt-1">${selectedProject.budget.toLocaleString()}</p>
+                        <p className="mt-1">${projectToView.budget.toLocaleString()}</p>
                       </div>
                       <div>
                         <h4 className="text-sm font-medium text-muted-foreground">Spent</h4>
-                        <p className="mt-1">${selectedProject.spent.toLocaleString()}</p>
+                        <p className="mt-1">${projectToView.spent.toLocaleString()}</p>
                       </div>
                     </div>
                     <div>
                       <h4 className="text-sm font-medium text-muted-foreground mb-1">Description</h4>
-                      <p className="text-sm">{selectedProject.description}</p>
+                      <p className="text-sm">{projectToView.description}</p>
                     </div>
                   </TabsContent>
                   <TabsContent value="risks" className="mt-4">
-                    {selectedProject.risks.length > 0 ? (
+                    {projectToView.risks.length > 0 ? (
                       <ul className="space-y-3">
-                        {selectedProject.risks.map((risk) => (
+                        {projectToView.risks.map((risk) => (
                           <li key={risk.id} className="border-b border-muted pb-2">
                             <div className="flex justify-between items-start">
                               <div>
@@ -209,7 +254,7 @@ const ProjectStatus = () => {
                   </TabsContent>
                   <TabsContent value="milestones" className="mt-4">
                     <ul className="space-y-3">
-                      {getMilestones(selectedProject).map((milestone, i) => (
+                      {getMilestones(projectToView).map((milestone, i) => (
                         <li
                           key={i}
                           className="flex items-center justify-between border-b border-muted pb-2"
@@ -249,6 +294,13 @@ const ProjectStatus = () => {
           open={isAddProjectDialogOpen} 
           onOpenChange={setAddProjectDialogOpen}
           onAddProject={addProject}
+        />
+        
+        <EditProjectDialog 
+          open={isEditProjectDialogOpen}
+          onOpenChange={setEditProjectDialogOpen}
+          project={selectedProject}
+          onEditProject={editProject}
         />
       </div>
     </DashboardLayout>

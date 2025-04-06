@@ -1,7 +1,7 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { BarChart, ChevronDown, Filter, Plus } from "lucide-react";
+import { BarChart, ChevronDown, Filter, Pencil, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Project, Risk } from "@/utils/mockData";
 import { cn } from "@/lib/utils";
@@ -9,9 +9,20 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { useProjects } from "@/context/ProjectContext";
 import { AddProjectDialog } from "./AddProjectDialog";
+import { EditProjectDialog } from "./EditProjectDialog";
 
 export function ProjectRisks() {
-  const { projects, isAddProjectDialogOpen, setAddProjectDialogOpen, addProject } = useProjects();
+  const { 
+    projects, 
+    isAddProjectDialogOpen, 
+    setAddProjectDialogOpen, 
+    addProject,
+    isEditProjectDialogOpen,
+    setEditProjectDialogOpen,
+    selectedProject,
+    setSelectedProject,
+    editProject
+  } = useProjects();
   
   function getRiskBadgeClass(level: string) {
     switch (level) {
@@ -32,6 +43,11 @@ export function ProjectRisks() {
       default: return '';
     }
   }
+
+  const handleEditProject = (project: Project) => {
+    setSelectedProject(project);
+    setEditProjectDialogOpen(true);
+  };
 
   // All risks across all projects
   const allRisks = projects.flatMap(project => 
@@ -70,6 +86,7 @@ export function ProjectRisks() {
                 <TableHead>Progress</TableHead>
                 <TableHead>Risk Score</TableHead>
                 <TableHead>Budget</TableHead>
+                <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -99,6 +116,12 @@ export function ProjectRisks() {
                     </div>
                   </TableCell>
                   <TableCell>${project.spent.toLocaleString()} / ${project.budget.toLocaleString()}</TableCell>
+                  <TableCell>
+                    <Button variant="ghost" size="sm" onClick={() => handleEditProject(project)}>
+                      <Pencil className="h-4 w-4 mr-1" />
+                      Edit
+                    </Button>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -149,10 +172,18 @@ export function ProjectRisks() {
         </CardContent>
       </Card>
       
+      {/* Dialogs */}
       <AddProjectDialog 
         open={isAddProjectDialogOpen} 
         onOpenChange={setAddProjectDialogOpen}
         onAddProject={addProject}
+      />
+      
+      <EditProjectDialog 
+        open={isEditProjectDialogOpen}
+        onOpenChange={setEditProjectDialogOpen}
+        project={selectedProject}
+        onEditProject={editProject}
       />
     </div>
   );

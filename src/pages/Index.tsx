@@ -6,9 +6,16 @@ import { ConversationalBot } from "@/components/Dashboard/ConversationalBot";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { useProjects } from "@/context/ProjectContext";
+import { EditProjectDialog } from "@/components/Dashboard/EditProjectDialog";
 
 const Index = () => {
-  const { setAddProjectDialogOpen } = useProjects();
+  const { 
+    setAddProjectDialogOpen, 
+    isEditProjectDialogOpen, 
+    setEditProjectDialogOpen, 
+    selectedProject, 
+    editProject 
+  } = useProjects();
 
   return (
     <DashboardLayout>
@@ -34,6 +41,14 @@ const Index = () => {
             <ConversationalBot />
           </div>
         </div>
+        
+        {/* Include the EditProjectDialog here as well to ensure it's available globally */}
+        <EditProjectDialog 
+          open={isEditProjectDialogOpen}
+          onOpenChange={setEditProjectDialogOpen}
+          project={selectedProject}
+          onEditProject={editProject}
+        />
       </div>
     </DashboardLayout>
   );
