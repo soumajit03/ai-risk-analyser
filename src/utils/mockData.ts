@@ -31,7 +31,7 @@ export interface Project {
 }
 
 // Initial projects data
-const initialProjects: Project[] = [
+export const initialProjects: Project[] = [
   {
     id: 'p1',
     name: 'Cloud Migration',
@@ -144,9 +144,26 @@ const initialProjects: Project[] = [
 // Create a store to manage projects data
 export let projects = [...initialProjects];
 
-// Function to add a new project
+// Function to add a new project - updated to ensure it's properly added to the mock data
 export const addProject = (project: Project) => {
+  // Add the project to the projects array - this creates a direct reference to the mockData
   projects = [...projects, project];
+  console.log("Project added to mockData:", project);
+  return projects;
+};
+
+// Function to get all projects - to ensure we can access all projects including newly added ones
+export const getAllProjects = () => {
+  return projects;
+};
+
+// Function to update an existing project
+export const updateProject = (projectId: string, updatedProject: Partial<Project>) => {
+  projects = projects.map(project => 
+    project.id === projectId 
+      ? { ...project, ...updatedProject } 
+      : project
+  );
   return projects;
 };
 

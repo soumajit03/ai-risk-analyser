@@ -1,6 +1,11 @@
 
 import { createContext, useState, useContext, ReactNode } from "react";
-import { Project, projects as initialProjects, addProject as addProjectToMock } from "@/utils/mockData";
+import { 
+  Project, 
+  projects as initialProjects, 
+  addProject as addProjectToMock,
+  updateProject as updateProjectInMock
+} from "@/utils/mockData";
 
 interface ProjectContextType {
   projects: Project[];
@@ -25,7 +30,7 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
   const addProject = (project: Project) => {
     // Update both the context state and the mock data
     setProjects((prev) => [...prev, project]);
-    addProjectToMock(project);
+    addProjectToMock(project); // This will add the project to the mockData directly
   };
 
   const editProject = (projectId: string, updatedProject: Partial<Project>) => {
@@ -34,6 +39,9 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
         ? { ...project, ...updatedProject } 
         : project
     ));
+    
+    // Update the mock data as well
+    updateProjectInMock(projectId, updatedProject);
   };
 
   return (
