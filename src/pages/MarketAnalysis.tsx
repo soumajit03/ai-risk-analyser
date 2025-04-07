@@ -7,6 +7,7 @@ import { marketIndicators } from "@/utils/mockData";
 import { useProjects } from "@/context/ProjectContext";
 import { Loader2 } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { toast } from "sonner";
 
 const MarketAnalysis = () => {
   const { projects } = useProjects();
@@ -49,7 +50,7 @@ const MarketAnalysis = () => {
       try {
         const prompt = generatePrompt();
         
-        const response = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent", {
+        const response = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -76,6 +77,7 @@ const MarketAnalysis = () => {
 
         // Parse the response from Gemini
         const text = data.candidates[0].content.parts[0].text;
+        toast.success("Market analysis data updated");
         
         // Extract trend analysis (first paragraph)
         const sections = text.split("\n\n");
@@ -126,6 +128,7 @@ const MarketAnalysis = () => {
       } catch (err) {
         console.error("Error fetching market trends:", err);
         setError(err.message || "Failed to fetch market trends");
+        toast.error("Failed to fetch market trends");
       } finally {
         setLoading(false);
       }
