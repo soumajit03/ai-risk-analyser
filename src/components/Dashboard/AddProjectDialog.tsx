@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -16,7 +15,7 @@ import { AlertTriangle, CalendarIcon, Plus } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
-import { format } from "date-fns";
+import { format, parse } from "date-fns";
 
 // Schema for project validation
 const projectSchema = z.object({
@@ -27,7 +26,9 @@ const projectSchema = z.object({
   budget: z.coerce.number().positive({ message: "Budget must be positive" }),
   spent: z.coerce.number().min(0, { message: "Spent amount cannot be negative" }),
   startDate: z.date(),
-  endDate: z.date()
+  endDate: z.date(),
+  startDateString: z.string().optional(),
+  endDateString: z.string().optional()
 });
 
 type ProjectFormValues = z.infer<typeof projectSchema>;
@@ -44,6 +45,8 @@ export function AddProjectDialog({ open, onOpenChange, onAddProject }: AddProjec
   const [riskDescription, setRiskDescription] = useState("");
   const [riskLevel, setRiskLevel] = useState<Risk["level"]>("Medium");
   const [riskCategory, setRiskCategory] = useState("");
+  const [startDateOpen, setStartDateOpen] = useState(false);
+  const [endDateOpen, setEndDateOpen] = useState(false);
   
   const form = useForm<ProjectFormValues>({
     resolver: zodResolver(projectSchema),
@@ -55,7 +58,9 @@ export function AddProjectDialog({ open, onOpenChange, onAddProject }: AddProjec
       budget: 0,
       spent: 0,
       startDate: new Date(),
-      endDate: new Date(new Date().setMonth(new Date().getMonth() + 3)) // Default to 3 months duration
+      endDate: new Date(new Date().setMonth(new Date().getMonth() + 3)), // Default to 3 months duration
+      startDateString: format(new Date(), "yyyy-MM-dd"),
+      endDateString: format(new Date(new Date().setMonth(new Date().getMonth() + 3)), "yyyy-MM-dd")
     }
   });
 
@@ -95,13 +100,45 @@ export function AddProjectDialog({ open, onOpenChange, onAddProject }: AddProjec
     setRisks(updatedRisks);
   };
 
+  const handleDateInputChange = (date: string, field: any, dateType: 'start' | 'end') => {
+    try {
+      const parsedDate = parse(date, 'yyyy-MM-dd', new Date());
+      
+      if (dateType === 'start') {
+        form.setValue('startDateString', date);
+        field.onChange(parsedDate);
+      } else {
+        form.setValue('endDateString', date);
+        field.onChange(parsedDate);
+      }
+    } catch (error) {
+      console.error("Invalid date format", error);
+    }
+  };
+
+  const handleCalendarSelect = (date: Date | undefined, field: any, dateType: 'start' | 'end') => {
+    if (date) {
+      const formattedDate = format(date, "yyyy-MM-dd");
+      
+      if (dateType === 'start') {
+        form.setValue('startDateString', formattedDate);
+        setStartDateOpen(false);
+      } else {
+        form.setValue('endDateString', formattedDate);
+        setEndDateOpen(false);
+      }
+      
+      field.onChange(date);
+    }
+  };
+
   const onSubmit = (data: ProjectFormValues) => {
     const newProject: Project = {
       id: `p${Date.now()}`, // Generate a simple unique ID
       name: data.name,
       description: data.description,
-      startDate: data.startDate.toISOString().split('T')[0],
-      endDate: data.endDate.toISOString().split('T')[0],
+      startDate: format(data.startDate, "yyyy-MM-dd"),
+      endDate: format(data.endDate, "yyyy-MM-dd"),
       status: data.status,
       budget: data.budget,
       spent: data.spent,
@@ -123,7 +160,6 @@ export function AddProjectDialog({ open, onOpenChange, onAddProject }: AddProjec
     setRisks([]);
   };
 
-  // Calculate risk score based on risk levels
   const calculateRiskScore = (projectRisks: Omit<Risk, "id" | "projectId">[]) => {
     if (projectRisks.length === 0) return 10; // Base risk score
     
@@ -211,34 +247,36 @@ export function AddProjectDialog({ open, onOpenChange, onAddProject }: AddProjec
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
                     <FormLabel>Start Date</FormLabel>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant={"outline"}
-                            className={cn(
-                              "pl-3 text-left font-normal",
-                              !field.value && "text-muted-foreground"
-                            )}
-                          >
-                            {field.value ? (
-                              format(field.value, "PPP")
-                            ) : (
-                              <span>Pick a date</span>
-                            )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={field.value}
-                          onSelect={field.onChange}
-                          initialFocus
+                    <div className="flex items-center gap-2">
+                      <FormControl>
+                        <Input 
+                          type="date" 
+                          value={form.watch('startDateString')}
+                          onChange={(e) => handleDateInputChange(e.target.value, field, 'start')}
                         />
-                      </PopoverContent>
-                    </Popover>
+                      </FormControl>
+                      <Popover open={startDateOpen} onOpenChange={setStartDateOpen}>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            type="button"
+                            className="px-2"
+                            onClick={() => setStartDateOpen(true)}
+                          >
+                            <CalendarIcon className="h-4 w-4" />
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={field.value}
+                            onSelect={(date) => handleCalendarSelect(date, field, 'start')}
+                            initialFocus
+                            className={cn("p-3 pointer-events-auto")}
+                          />
+                        </PopoverContent>
+                      </Popover>
+                    </div>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -250,34 +288,36 @@ export function AddProjectDialog({ open, onOpenChange, onAddProject }: AddProjec
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
                     <FormLabel>End Date</FormLabel>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant={"outline"}
-                            className={cn(
-                              "pl-3 text-left font-normal",
-                              !field.value && "text-muted-foreground"
-                            )}
-                          >
-                            {field.value ? (
-                              format(field.value, "PPP")
-                            ) : (
-                              <span>Pick a date</span>
-                            )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={field.value}
-                          onSelect={field.onChange}
-                          initialFocus
+                    <div className="flex items-center gap-2">
+                      <FormControl>
+                        <Input 
+                          type="date" 
+                          value={form.watch('endDateString')}
+                          onChange={(e) => handleDateInputChange(e.target.value, field, 'end')}
                         />
-                      </PopoverContent>
-                    </Popover>
+                      </FormControl>
+                      <Popover open={endDateOpen} onOpenChange={setEndDateOpen}>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            type="button"
+                            className="px-2"
+                            onClick={() => setEndDateOpen(true)}
+                          >
+                            <CalendarIcon className="h-4 w-4" />
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={field.value}
+                            onSelect={(date) => handleCalendarSelect(date, field, 'end')}
+                            initialFocus
+                            className={cn("p-3 pointer-events-auto")}
+                          />
+                        </PopoverContent>
+                      </Popover>
+                    </div>
                     <FormMessage />
                   </FormItem>
                 )}
