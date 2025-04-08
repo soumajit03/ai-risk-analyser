@@ -34,6 +34,18 @@
     --ring: 222.2 84% 4.9%;
 
     --radius: 0.5rem;
+
+    /* Hover state colors for light theme */
+    --hover-background: 210 40% 92%;
+    --hover-foreground: 222.2 84% 4.9%;
+    --hover-card: 210 40% 96%;
+    --hover-card-foreground: 222.2 84% 4.9%;
+    --hover-popover: 210 40% 96%;
+    --hover-popover-foreground: 222.2 84% 4.9%;
+    --hover-primary: 215 50% 18%;
+    --hover-primary-foreground: 210 40% 98%;
+    --hover-secondary: 210 40% 92%;
+    --hover-secondary-foreground: 222.2 47.4% 11.2%;
   }
 
   .dark {
@@ -64,6 +76,18 @@
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 212.7 26.8% 83.9%;
+
+    /* Hover state colors for dark theme */
+    --hover-background: 217.2 32.6% 10%;
+    --hover-foreground: 210 40% 98%;
+    --hover-card: 217.2 32.6% 12%;
+    --hover-card-foreground: 210 40% 98%;
+    --hover-popover: 217.2 32.6% 12%;
+    --hover-popover-foreground: 210 40% 98%;
+    --hover-primary: 210 40% 90%;
+    --hover-primary-foreground: 222.2 47.4% 11.2%;
+    --hover-secondary: 217.2 32.6% 22%;
+    --hover-secondary-foreground: 210 40% 98%;
   }
 }
 
@@ -78,17 +102,42 @@
 }
 
 .risk-low {
-  @apply text-green-600 bg-green-100;
+  @apply text-green-600 bg-green-100 dark:bg-green-950 dark:text-green-300;
 }
 
 .risk-medium {
-  @apply text-yellow-600 bg-yellow-100;
+  @apply text-yellow-600 bg-yellow-100 dark:bg-yellow-950 dark:text-yellow-300;
 }
 
 .risk-high {
-  @apply text-orange-600 bg-orange-100;
+  @apply text-orange-600 bg-orange-100 dark:bg-orange-950 dark:text-orange-300;
 }
 
 .risk-critical {
-  @apply text-red-600 bg-red-100;
+  @apply text-red-600 bg-red-100 dark:bg-red-950 dark:text-red-300;
+}
+
+/* Hover transition utility classes */
+.hover-transition {
+  @apply transition-colors duration-200;
+}
+
+/* Card hover effects */
+.card-hover {
+  @apply hover:shadow-md hover:border-primary/30 hover-transition;
+}
+
+/* Button hover improvements */
+.button-hover-effect {
+  @apply hover:shadow-sm hover-transition;
+}
+
+/* Navigation item hover */
+.nav-item-hover {
+  @apply hover:bg-accent/80 dark:hover:bg-accent/50 hover-transition;
+}
+
+/* Menu item hover */
+.menu-item-hover {
+  @apply hover:bg-accent/80 dark:hover:bg-accent/50 hover-transition;
 }

@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,6 +62,19 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				// Hover colors
+				hover: {
+					background: 'hsl(var(--hover-background))',
+					foreground: 'hsl(var(--hover-foreground))',
+					card: 'hsl(var(--hover-card))',
+					'card-foreground': 'hsl(var(--hover-card-foreground))',
+					popover: 'hsl(var(--hover-popover))',
+					'popover-foreground': 'hsl(var(--hover-popover-foreground))',
+					primary: 'hsl(var(--hover-primary))',
+					'primary-foreground': 'hsl(var(--hover-primary-foreground))',
+					secondary: 'hsl(var(--hover-secondary))',
+					'secondary-foreground': 'hsl(var(--hover-secondary-foreground))'
 				}
 			},
 			borderRadius: {
@@ -89,6 +103,12 @@ export default {
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out'
+			},
+			transitionProperty: {
+				'colors': 'background-color, border-color, color, fill, stroke',
+			},
+			transitionDuration: {
+				'200': '200ms',
 			}
 		}
 	},
