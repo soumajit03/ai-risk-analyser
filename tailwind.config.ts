@@ -110,7 +110,7 @@ export default {
 			transitionDuration: {
 				'200': '200ms',
 			},
-			// Add typography configurations for prose
+			// Enhanced typography configurations for dark mode
 			typography: {
 				DEFAULT: {
 					css: {
@@ -118,6 +118,16 @@ export default {
 						'--tw-prose-headings': 'hsl(var(--foreground))',
 						'--tw-prose-body': 'hsl(var(--foreground))',
 						'--tw-prose-bold': 'hsl(var(--foreground))',
+					},
+				},
+				dark: {
+					css: {
+						color: 'hsl(var(--foreground))',
+						'--tw-prose-headings': 'hsl(var(--foreground))',
+						'--tw-prose-body': 'hsl(var(--foreground))',
+						'--tw-prose-bold': 'hsl(var(--foreground))',
+						'--tw-prose-links': 'hsl(var(--primary))',
+						'--tw-prose-quotes': 'hsl(var(--foreground))',
 					},
 				},
 			},

@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -117,38 +116,50 @@
   @apply text-red-600 bg-red-100 dark:bg-red-950 dark:text-red-300;
 }
 
-/* Hover transition utility classes */
 .hover-transition {
   @apply transition-colors duration-200;
 }
 
-/* Card hover effects */
 .card-hover {
   @apply hover:shadow-md hover:border-primary/30 hover-transition;
 }
 
-/* Button hover improvements */
 .button-hover-effect {
   @apply hover:shadow-sm hover-transition;
 }
 
-/* Navigation item hover */
 .nav-item-hover {
   @apply hover:bg-accent/80 dark:hover:bg-accent/50 hover-transition;
 }
 
-/* Menu item hover */
 .menu-item-hover {
   @apply hover:bg-accent/80 dark:hover:bg-accent/50 hover-transition;
 }
 
-/* Add prose styles for markdown content */
-@layer components {
-  .prose {
-    @apply text-foreground;
-  }
-  
-  .prose-invert {
-    @apply text-foreground;
-  }
+.prose {
+  @apply text-foreground;
+}
+
+.prose-invert {
+  @apply text-foreground;
+}
+
+.recharts-text.recharts-cartesian-axis-tick-value {
+  fill: currentColor !important;
+}
+
+.recharts-default-tooltip {
+  background-color: var(--popover) !important;
+  border-color: var(--border) !important;
+  color: var(--foreground) !important;
+}
+
+.recharts-tooltip-label,
+.recharts-tooltip-item-name,
+.recharts-tooltip-item-value {
+  color: var(--foreground) !important;
+}
+
+.recharts-pie-label-text {
+  fill: var(--foreground) !important;
 }

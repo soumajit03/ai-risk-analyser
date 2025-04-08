@@ -22,7 +22,6 @@ export function RiskChart({ data, type, colors = ['#1A365D', '#2A4365', '#2C5282
               fill="#8884d8"
               dataKey="value"
               label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-              labelStyle={{ fill: 'var(--foreground)' }}
             >
               {data.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
@@ -48,9 +47,24 @@ export function RiskChart({ data, type, colors = ['#1A365D', '#2A4365', '#2C5282
           }}
         >
           <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-          <XAxis dataKey="name" tick={{ fill: 'var(--foreground)' }} />
-          <YAxis tick={{ fill: 'var(--foreground)' }} />
-          <Tooltip contentStyle={{ backgroundColor: 'var(--popover)', color: 'var(--popover-foreground)' }} />
+          <XAxis 
+            dataKey="name" 
+            tick={{ fill: 'var(--foreground)' }}
+            stroke="var(--foreground)" 
+          />
+          <YAxis 
+            tick={{ fill: 'var(--foreground)' }}
+            stroke="var(--foreground)"
+          />
+          <Tooltip 
+            contentStyle={{ 
+              backgroundColor: 'var(--popover)', 
+              color: 'var(--popover-foreground)',
+              border: '1px solid var(--border)'
+            }} 
+            labelStyle={{ color: 'var(--foreground)' }}
+            itemStyle={{ color: 'var(--foreground)' }}
+          />
           <Bar dataKey="value" fill={colors[0]} />
         </BarChart>
       </ResponsiveContainer>
