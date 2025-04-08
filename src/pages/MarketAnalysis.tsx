@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { DashboardLayout } from "@/components/Dashboard/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -21,7 +20,6 @@ const MarketAnalysis = () => {
     value: indicator.value
   }));
 
-  // Generate project-based prompt for AI
   const generatePrompt = () => {
     const projectNames = projects.map(p => p.name).join(", ");
     const projectStatuses = projects.map(p => `${p.name} (Status: ${p.status}, Risk Score: ${p.riskScore}/100)`).join("\n");
@@ -36,7 +34,6 @@ const MarketAnalysis = () => {
     `;
   };
 
-  // Fetch market trends using Gemini API
   useEffect(() => {
     const fetchMarketTrends = async () => {
       if (projects.length === 0) {
@@ -75,18 +72,14 @@ const MarketAnalysis = () => {
           throw new Error(data.error?.message || "Failed to fetch market trends");
         }
 
-        // Parse the response from Gemini
         const text = data.candidates[0].content.parts[0].text;
         toast.success("Market analysis data updated");
         
-        // Extract trend analysis (first paragraph)
         const sections = text.split("\n\n");
         const trendSection = sections[0];
         setTrendAnalysis(trendSection);
         
-        // Try to extract JSON objects from the text
         try {
-          // Find all text between { and }
           const regex = /{[^{}]*}/g;
           const matches = text.match(regex);
           
@@ -95,7 +88,6 @@ const MarketAnalysis = () => {
               try {
                 return JSON.parse(match);
               } catch (e) {
-                // If JSON parsing fails, create a structured object
                 return { 
                   factor: "Market Factor", 
                   trend: "Trend Direction",
@@ -106,7 +98,6 @@ const MarketAnalysis = () => {
             });
             setImpactAssessment(parsedImpacts.slice(0, 4));
           } else {
-            // If no JSON format found, extract potential bullet points as impacts
             const bulletPoints = text.split("\n").filter(line => line.match(/^[•\-*]\s+/));
             const structuredImpacts = bulletPoints.slice(0, 4).map(point => ({
               factor: "Market Factor",
@@ -175,7 +166,7 @@ const MarketAnalysis = () => {
                   </AlertDescription>
                 </Alert>
               ) : (
-                <div className="prose prose-sm max-w-none">
+                <div className="prose prose-sm max-w-none dark:prose-invert">
                   {trendAnalysis ? (
                     <p>{trendAnalysis}</p>
                   ) : (
@@ -209,14 +200,14 @@ const MarketAnalysis = () => {
                       {impactAssessment.map((impact, index) => (
                         <div key={index} className="border rounded-md p-4 space-y-2">
                           <div className="flex justify-between items-center">
-                            <h3 className="font-semibold">{impact.factor}</h3>
-                            <span className="text-sm text-blue-600 bg-blue-50 px-2 py-1 rounded-full">
+                            <h3 className="font-semibold text-foreground">{impact.factor}</h3>
+                            <span className="text-sm bg-blue-50 dark:bg-blue-900 text-blue-600 dark:text-blue-300 px-2 py-1 rounded-full">
                               {impact.trend}
                             </span>
                           </div>
-                          <p className="text-sm">{impact.impact}</p>
+                          <p className="text-sm text-foreground">{impact.impact}</p>
                           <div className="pt-2 border-t">
-                            <span className="text-xs font-semibold">Recommendation:</span>
+                            <span className="text-xs font-semibold text-foreground">Recommendation:</span>
                             <p className="text-sm text-muted-foreground">{impact.recommendation}</p>
                           </div>
                         </div>

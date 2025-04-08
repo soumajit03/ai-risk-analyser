@@ -141,3 +141,14 @@
 .menu-item-hover {
   @apply hover:bg-accent/80 dark:hover:bg-accent/50 hover-transition;
 }
+
+/* Add prose styles for markdown content */
+@layer components {
+  .prose {
+    @apply text-foreground;
+  }
+  
+  .prose-invert {
+    @apply text-foreground;
+  }
+}

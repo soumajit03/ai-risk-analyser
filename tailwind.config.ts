@@ -109,8 +109,22 @@ export default {
 			},
 			transitionDuration: {
 				'200': '200ms',
-			}
+			},
+			// Add typography configurations for prose
+			typography: {
+				DEFAULT: {
+					css: {
+						color: 'hsl(var(--foreground))',
+						'--tw-prose-headings': 'hsl(var(--foreground))',
+						'--tw-prose-body': 'hsl(var(--foreground))',
+						'--tw-prose-bold': 'hsl(var(--foreground))',
+					},
+				},
+			},
 		}
 	},
-	plugins: [require("tailwindcss-animate")],
+	plugins: [
+		require("tailwindcss-animate"),
+		require('@tailwindcss/typography'),
+	],
 } satisfies Config;
