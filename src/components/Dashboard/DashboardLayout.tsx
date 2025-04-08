@@ -152,9 +152,12 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                     "justify-start",
                     collapsed ? "w-10 h-10 p-0" : ""
                   )}
+                  asChild
                 >
-                  <Settings className={cn("h-5 w-5", !collapsed && "mr-2")} />
-                  {!collapsed && <span>Settings</span>}
+                  <Link to="/settings" onClick={() => setMobileMenuOpen(false)}>
+                    <Settings className={cn("h-5 w-5", !collapsed && "mr-2")} />
+                    {!collapsed && <span>Settings</span>}
+                  </Link>
                 </Button>
               </TooltipTrigger>
               {collapsed && (
