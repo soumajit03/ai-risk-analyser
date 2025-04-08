@@ -1,12 +1,14 @@
 
 import { DashboardLayout } from "@/components/Dashboard/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { projects } from "@/utils/mockData";
+import { useProjects } from "@/context/ProjectContext"; 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
 const RiskScoring = () => {
+  const { projects } = useProjects();
+  
   function getRiskClass(score: number) {
     if (score > 70) return "bg-red-100 text-red-800";
     if (score > 50) return "bg-orange-100 text-orange-800";

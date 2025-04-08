@@ -1,10 +1,11 @@
 
-import { createContext, useState, useContext, ReactNode } from "react";
+import { createContext, useState, useContext, ReactNode, useEffect } from "react";
 import { 
   Project, 
   projects as initialProjects, 
   addProject as addProjectToMock,
-  updateProject as updateProjectInMock
+  updateProject as updateProjectInMock,
+  getAllProjects
 } from "@/utils/mockData";
 
 interface ProjectContextType {
@@ -17,6 +18,7 @@ interface ProjectContextType {
   setEditProjectDialogOpen: (open: boolean) => void;
   selectedProject: Project | null;
   setSelectedProject: (project: Project | null) => void;
+  refreshProjects: () => void;
 }
 
 const ProjectContext = createContext<ProjectContextType | undefined>(undefined);
@@ -27,21 +29,21 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
   const [isEditProjectDialogOpen, setEditProjectDialogOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
+  // Function to refresh projects from mockData
+  const refreshProjects = () => {
+    setProjects(getAllProjects());
+  };
+
   const addProject = (project: Project) => {
     // Update both the context state and the mock data
-    setProjects((prev) => [...prev, project]);
     addProjectToMock(project); // This will add the project to the mockData directly
+    refreshProjects(); // Refresh the projects from mockData to ensure consistency
   };
 
   const editProject = (projectId: string, updatedProject: Partial<Project>) => {
-    setProjects(projects.map(project => 
-      project.id === projectId 
-        ? { ...project, ...updatedProject } 
-        : project
-    ));
-    
-    // Update the mock data as well
+    // Update the mock data
     updateProjectInMock(projectId, updatedProject);
+    refreshProjects(); // Refresh the projects from mockData to ensure consistency
   };
 
   return (
@@ -54,7 +56,8 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
       isEditProjectDialogOpen,
       setEditProjectDialogOpen,
       selectedProject,
-      setSelectedProject
+      setSelectedProject,
+      refreshProjects
     }}>
       {children}
     </ProjectContext.Provider>

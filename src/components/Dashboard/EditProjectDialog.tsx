@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -16,6 +15,7 @@ import { CalendarIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+import { useProjects } from "@/context/ProjectContext";
 
 const projectFormSchema = z.object({
   name: z.string().min(1, "Project name is required"),
@@ -43,6 +43,7 @@ export function EditProjectDialog({
   project, 
   onEditProject 
 }: EditProjectDialogProps) {
+  const { refreshProjects } = useProjects();
   const [startDateOpen, setStartDateOpen] = useState(false);
   const [endDateOpen, setEndDateOpen] = useState(false);
 
@@ -60,7 +61,6 @@ export function EditProjectDialog({
     },
   });
 
-  // Update form values when project changes
   useEffect(() => {
     if (project) {
       form.reset({
@@ -76,12 +76,10 @@ export function EditProjectDialog({
     }
   }, [project, form]);
 
-  // Handle date input change manually
   const handleDateInputChange = (date: string, field: any) => {
     field.onChange(date);
   };
 
-  // Handle date selection from calendar
   const handleCalendarSelect = (date: Date | undefined, field: any) => {
     if (date) {
       field.onChange(format(date, "yyyy-MM-dd"));
@@ -93,10 +91,11 @@ export function EditProjectDialog({
     
     onEditProject(project.id, {
       ...data,
-      // Keep the risks array and other properties not in the form
       risks: project.risks,
       riskScore: project.riskScore,
     });
+    
+    refreshProjects();
     
     toast.success("Project updated successfully");
     onOpenChange(false);

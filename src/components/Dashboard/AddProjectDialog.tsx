@@ -16,6 +16,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
 import { format, parse } from "date-fns";
+import { useProjects } from "@/context/ProjectContext";
 
 // Schema for project validation
 const projectSchema = z.object({
@@ -40,6 +41,7 @@ interface AddProjectDialogProps {
 }
 
 export function AddProjectDialog({ open, onOpenChange, onAddProject }: AddProjectDialogProps) {
+  const { refreshProjects } = useProjects();
   const [risks, setRisks] = useState<Omit<Risk, "id" | "projectId">[]>([]);
   const [riskName, setRiskName] = useState("");
   const [riskDescription, setRiskDescription] = useState("");
@@ -152,6 +154,7 @@ export function AddProjectDialog({ open, onOpenChange, onAddProject }: AddProjec
     };
 
     onAddProject(newProject);
+    refreshProjects();
     onOpenChange(false);
     toast.success("Project added successfully");
     
